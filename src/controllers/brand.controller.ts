@@ -3,17 +3,17 @@ import { Brand } from "../models/brand.model";
 import { paginate } from "../utils/pagination";
 import { tryCatch } from "../utils/tryCatch";
 
-export const allBrands = async (req: Request, res: Response) => {
+export const fetchBrands = async (req: Request, res: Response) => {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
 
-    const [result, error] = await tryCatch(
+    const [error, result] = await tryCatch(
         paginate(Brand, {
             page,
             limit,
             sort: { priority: -1 },
             filter: { active: true },
-            select: "brandName brandImg"
+            select: "brandName slug brandImg"
         }),
         "Fetching brands"
     );
@@ -37,7 +37,7 @@ export const allBrands = async (req: Request, res: Response) => {
 export const createBrand = async (req: Request, res: Response) => {
     const { brandName, brandImg, active, priority } = req.body;
 
-    const [brand, error] = await tryCatch(
+    const [error, brand] = await tryCatch(
         Brand.create({ brandName, slug: brandName, brandImg, active, priority }),
         "Creating brand"
     );
@@ -61,7 +61,7 @@ export const updateBrand = async (req: Request, res: Response) => {
     const { brandName, brandImg, active, priority } = req.body;
     const { id } = req.params;
 
-    const [brand, error] = await tryCatch(
+    const [error, brand] = await tryCatch(
         Brand.findByIdAndUpdate(id, { brandName, brandImg, active, priority }, { new: true, runValidators: true }),
         "Updating brand"
     );
@@ -84,7 +84,7 @@ export const updateBrand = async (req: Request, res: Response) => {
 export const deleteBrand = async (req: Request, res: Response) => {
     const { id } = req.params;
 
-    const [brand, error] = await tryCatch(
+    const [error, brand] = await tryCatch(
         Brand.findByIdAndDelete(id),
         "Deleting Brand"
     );

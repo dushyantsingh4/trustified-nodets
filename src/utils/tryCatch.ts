@@ -1,5 +1,5 @@
-type Success<T> = [T, null];
-type Failure = [null, Error];
+type Success<T> = [null, T];
+type Failure = [Error, null];
 type Result<T> = Success<T> | Failure;
 
 /**
@@ -16,10 +16,10 @@ export const tryCatch = async <T>(
 ): Promise<Result<T>> => {
     try {
         const data = await promise;
-        return [data, null];
+        return [null, data];
     } catch (err) {
         const error = err instanceof Error ? err : new Error(String(err));
         console.error(`[Error]${context ? ` ${context}:` : ""}`, error.message);
-        return [null, error];
+        return [error, null];
     }
 };

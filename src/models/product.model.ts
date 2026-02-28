@@ -1,6 +1,13 @@
 import { Schema, model, Types } from "mongoose";
 import slugify from "slugify";
 
+type IProductVariant = {
+    variantName?: string;
+    variantValue?: string;
+    variantPrice: number;
+    variantStock: number;
+}
+
 export interface IProduct {
     productName: string;
     slug: string;
@@ -9,8 +16,8 @@ export interface IProduct {
     discountedPrice?: number;
     category: Types.ObjectId;
     brand: Types.ObjectId;
-    productImg?: string;
     images?: string[];
+    variants?: IProductVariant[];
     stock: number;
     active: boolean;
     priority: number;
@@ -58,10 +65,6 @@ const ProductSchema = new Schema<IProduct>({
         ref: "Brand",
         required: [true, "Product brand is required"],
         index: true,
-    },
-    productImg: {
-        type: String,
-        maxlength: 400,
     },
     images: {
         type: [String],
